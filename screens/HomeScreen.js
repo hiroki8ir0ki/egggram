@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, LayoutAnimation } from "react-native";
 import * as firebase from "firebase"; 
 
 export default class HomeScreen extends Component {

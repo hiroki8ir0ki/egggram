@@ -4,9 +4,11 @@ import {
   Text,
   StyleSheet,
   TextInput,
+  Image, 
   TouchableOpacity,
   StatusBar,
 } from "react-native";
+import * as firebase from "firebase";
 
 export default class RegisterScreen extends Component {
   static navigationOptions = {
