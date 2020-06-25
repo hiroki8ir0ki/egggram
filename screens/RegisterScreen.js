@@ -7,48 +7,49 @@ import {
   TouchableOpacity,
   Image,
   StatusBar,
+  ScrollView,
 } from "react-native";
+import Fire from "../Fire";
 import { Ionicons } from "@expo/vector-icons";
-import Fire from '../Fire'; 
-import UserPermissions from '../utilities/UserPermission'
-import * as ImagePicker from 'expo-image-picker'
+import * as ImagePicker from "expo-image-picker";
+import UserPermissions from "../utilities/UserPermission";
 
 export default class RegisterScreen extends React.Component {
   static navigationOptions = {
     header: null,
   };
 
-  state = { 
-    user:{ 
-      name: "", 
-      email: "", 
+  state = {
+    user: {
+      name: "",
+      email: "",
       password: "",
       avatar: null,
     },
-     errorMessage: null };
-
-     handlePickAvatar = async () => {
-      UserPermissions.getCameraPermission();
-
-          let result = await ImagePicker.launchImageLibraryAsync({
-          mediaTypes: ImagePicker.MediaTypeOptions.Images,
-          allowsEditing: true,
-          aspect: [4, 3]
-      });
-
-      if (!result.cancelled) {
-          this.setState({ user: { ...this.state.user, avatar: result.uri } });
-      }
+    errorMessage: null,
   };
 
+  handlePickAvatar = async () => {
+    UserPermissions.getCameraPermission();
+
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+    });
+
+    if (!result.cancelled) {
+      this.setState({ user: { ...this.state.user, avatar: result.uri } });
+    }
+  };
 
   handleSignUp = () => {
-    Fire.shared.createUser(this.state.user)
+    Fire.shared.createUser(this.state.user);
   };
 
   render() {
     return (
-      <View style={styles.container}>
+      <ScrollView style={styles.container}>
         <StatusBar barStyle="light-content"></StatusBar>
         <Image
           source={require("../assets/authHeader.png")}
@@ -79,8 +80,14 @@ export default class RegisterScreen extends React.Component {
           <Text
             style={styles.greeting}
           >{`Hello!\nSign up to get started.`}</Text>
-          <TouchableOpacity style={styles.avatarplaceholder} onPress={this.handlePickAvatar}>
-            <Image source={{uri: this.state.user.avatar}} style={styles.avatar} />
+          <TouchableOpacity
+            style={styles.avatarplaceholder}
+            onPress={this.handlePickAvatar}
+          >
+            <Image
+              source={{ uri: this.state.user.avatar }}
+              style={styles.avatar}
+            />
             <Ionicons
               name="ios-add"
               size={40}
@@ -101,7 +108,9 @@ export default class RegisterScreen extends React.Component {
             <Text style={styles.inputTitle}>Full Name</Text>
             <TextInput
               style={styles.input}
-              onChangeText={(name) => this.setState({ user: {...this.state.user, name} })}
+              onChangeText={(name) =>
+                this.setState({ user: { ...this.state.user, name } })
+              }
               value={this.state.user.name}
             ></TextInput>
           </View>
@@ -111,7 +120,9 @@ export default class RegisterScreen extends React.Component {
             <TextInput
               style={styles.input}
               autoCapitalize="none"
-              onChangeText={(email) => this.setState({ user: {...this.state.user, email} })}
+              onChangeText={(email) =>
+                this.setState({ user: { ...this.state.user, email } })
+              }
               value={this.state.user.email}
             ></TextInput>
           </View>
@@ -122,7 +133,9 @@ export default class RegisterScreen extends React.Component {
               style={styles.input}
               secureTextEntry
               autoCapitalize="none"
-              onChangeText={(password) => this.setState({ user: {...this.state.user, password} })}
+              onChangeText={(password) =>
+                this.setState({ user: { ...this.state.user, password } })
+              }
               value={this.state.user.password}
             ></TextInput>
           </View>
@@ -141,7 +154,7 @@ export default class RegisterScreen extends React.Component {
             <Text style={{ fontWeight: "500", color: "#E9446A" }}>Sign in</Text>
           </Text>
         </TouchableOpacity>
-      </View>
+      </ScrollView>
     );
   }
 }
@@ -210,10 +223,10 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     marginTop: 48,
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
   },
   avatar: {
-    position: "absolute", 
+    position: "absolute",
     width: 100,
     height: 100,
     borderRadius: 50,
