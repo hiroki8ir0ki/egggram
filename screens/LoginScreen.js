@@ -1,17 +1,17 @@
-import React, { Component } from "react";
+import React from "react";
 import {
   View,
   Text,
   StyleSheet,
   TextInput,
   TouchableOpacity,
-//   Image,
+  Image,
   StatusBar,
   LayoutAnimation,
 } from "react-native";
 import * as firebase from "firebase";
 
-export default class Login extends Component {
+export default class LoginScreen extends React.Component {
   static navigationOptions = {
     header: null,
   };
@@ -28,33 +28,35 @@ export default class Login extends Component {
     firebase
       .auth()
       .signInWithEmailAndPassword(email, password)
-      .catch((error) => this.setState({ errorMessage: error.Message }));
+      .catch((error) => this.setState({ errorMessage: error.message }));
   };
 
   render() {
+    LayoutAnimation.easeInEaseOut();
 
     return (
-    <View style={styles.container}>
-        {/* <StatusBar barStyle="light-content"></StatusBar> */}
-        {/* <Image
+      <View style={styles.container}>
+        <StatusBar barStyle="light-content"></StatusBar>
+        <Image
           source={require("../assets/authHeader.png")}
-          style={{ marginTop: -176, marginLeft: -50, width: 30 }}
-        />
+          style={{ marginTop: -176, marginLeft: -50 }}
+        ></Image>
         <Image
           source={require("../assets/authFooter.png")}
-          style={{ position: "absolute", buttom: -325, right: -225, width: 30 }}
-        />
+          style={{ position: "absolute", bottom: -325, right: -225 }}
+        ></Image>
         <Image
           source={require("../assets/loginLogo.png")}
-          style={{ marginTop: -110, alignSelf: "center", width: 30 }}
-        />{" "}
-        */} 
+          style={{ marginTop: -110, alignSelf: "center" }}
+        ></Image>
         <Text style={styles.greeting}>{`Hello again.\nWelcome back.`}</Text>
+
         <View style={styles.errorMessage}>
           {this.state.errorMessage && (
             <Text style={styles.error}>{this.state.errorMessage}</Text>
           )}
         </View>
+
         <View style={styles.form}>
           <View>
             <Text style={styles.inputTitle}>Email Address</Text>
@@ -77,9 +79,11 @@ export default class Login extends Component {
             ></TextInput>
           </View>
         </View>
+
         <TouchableOpacity style={styles.button} onPress={this.handleLogin}>
           <Text style={{ color: "#FFF", fontWeight: "500" }}>Sign in</Text>
         </TouchableOpacity>
+
         <TouchableOpacity
           style={{ alignSelf: "center", marginTop: 32 }}
           onPress={() => this.props.navigation.navigate("Register")}
@@ -102,18 +106,6 @@ const styles = StyleSheet.create({
     marginTop: -32,
     fontSize: 18,
     fontWeight: "400",
-    textAlign: "center",
-  },
-  errorMessage: {
-    height: 72,
-    alignItems: "center",
-    justifyContent: "center",
-    marginHorizontal: 30,
-  },
-  error: {
-    color: "#E9446A",
-    fontSize: 13,
-    fontWeight: "600",
     textAlign: "center",
   },
   form: {
@@ -139,5 +131,17 @@ const styles = StyleSheet.create({
     height: 52,
     alignItems: "center",
     justifyContent: "center",
+  },
+  errorMessage: {
+    height: 72,
+    alignItems: "center",
+    justifyContent: "center",
+    marginHorizontal: 30,
+  },
+  error: {
+    color: "#E9446A",
+    fontSize: 13,
+    fontWeight: "600",
+    textAlign: "center",
   },
 });
