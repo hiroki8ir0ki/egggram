@@ -8,10 +8,13 @@ class Fire {
   }
 
   addPost = async ({ text, localUri }) => {
-    const remoteUri = await this.uploadPhotoAsync(
-      localUri,
-      `photos/${this.uid}/${Data.now()}`
-    );
+    let remoteUri = "";
+    if (localUri) {
+      let remoteUri = await this.uploadPhotoAsync(
+        localUri,
+        `photos/${this.uid}/${Date.now()}`
+      );
+    }
 
     return new Promise((res, rej) => {
       this.firestore
@@ -20,6 +23,8 @@ class Fire {
           text,
           uid: this.uid,
           timestamp: this.timestamp,
+          likes: [],
+          location: "",
           image: remoteUri,
         })
         .then((ref) => {
@@ -35,9 +40,7 @@ class Fire {
     return new Promise(async (res, rej) => {
       const response = await fetch(uri);
       const file = await response.blob();
-
-      let upload = firebase.storage().ref(filename).put(file);
-
+      const upload = firebase.storage().ref(filename).put(file);
       upload.on(
         "state_changed",
         (snapshot) => {},

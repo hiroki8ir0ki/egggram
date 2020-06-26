@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import { View, Text, StyleSheet, FlatList, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import moment from 'moment'
+import moment from "moment";
+import Fire from "../Fire";
 
 // temporary data until we pull from Firebase
 posts = [
@@ -44,6 +45,20 @@ posts = [
 ];
 
 export default class HomeScreen extends Component {
+  state = {
+    posts: null,
+    postsRef: Fire.shared.firestore.collection("posts"),
+  };
+
+  componentDidMount() {
+    this.state.postsRef.onSnapshot((querySnapshot) => {
+      const temp = [];
+      querySnapshot.forEach((doc) => temp.push(doc.data()));
+
+      this.setState({ posts: temp });
+    });
+  }
+
   renderPost = (post) => {
     return (
       <View style={styles.feedItem}>
@@ -58,18 +73,31 @@ export default class HomeScreen extends Component {
           >
             <View>
               <Text style={styles.name}>{post.name}</Text>
-              <Text style={styles.timestamp}>{moment(post.timestamp).fromNow()}</Text>
+              <Text style={styles.timestamp}>
+                {moment(post.timestamp).fromNow()}
+              </Text>
             </View>
             <Ionicons name="ios-more" size={24} color="#73788B" />
           </View>
 
           <Text style={styles.post}>{post.text}</Text>
 
-          <Image source={post.image} style={styles.postImage} resizeMode="cover" />
+          <Image
+            source={{
+              uri: post.image,
+            }}
+            style={styles.postImage}
+            resizeMode="cover"
+          />
 
           <View style={{ flexDirection: "row" }}>
-              <Ionicons name="ios-heart-empty" size={24} color="#73788B" style={{ marginRight: 16 }} />
-              <Ionicons name="ios-chatboxes" size={24} color="#73788B" />
+            <Ionicons
+              name="ios-heart-empty"
+              size={24}
+              color="#73788B"
+              style={{ marginRight: 16 }}
+            />
+            <Ionicons name="ios-chatboxes" size={24} color="#73788B" />
           </View>
         </View>
       </View>
@@ -85,7 +113,7 @@ export default class HomeScreen extends Component {
 
         <FlatList
           style={styles.feed}
-          data={posts}
+          data={this.state.posts}
           renderItem={({ item }) => this.renderPost(item)}
           keyExtractor={(item) => item.id}
           showsVerticalScrollIndicator={false}
@@ -150,9 +178,9 @@ const styles = StyleSheet.create({
     color: "#838899",
   },
   postImage: {
-      width: undefined,
-      height: 150,
-      borderRadius: 5,
-      marginVertical: 16 
-  }
+    width: undefined,
+    height: 150,
+    borderRadius: 5,
+    marginVertical: 16,
+  },
 });
