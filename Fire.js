@@ -84,6 +84,40 @@ class Fire {
     }
   };
 
+  updateUser = async (user) => {
+    let remoteUri = null;
+
+    try {
+      await firebase
+        .auth()
+        .currentUser.updateProfile({ email: user.email, display: user.name });
+
+      if (user.password) {
+        await firebase.auth().currentUser.updatePassword(user.password);
+      }
+
+      let db = this.firestore.collection("users").doc(this.uid);
+
+      db.update({
+        name: user.name,
+        email: user.email,
+        avatar: null,
+      });
+
+      if (user.avatar) {
+        remoteUri = await this.uploadPhotoAsync(
+          user.avatar,
+          `avatars/${this.uid}`
+        );
+
+        db.update({ avatar: remoteUri }, { merge: true });
+      }
+    } catch (error) {
+      console.log(error);
+      alert("Error: ", error);
+    }
+  };
+
   signOut = () => {
     firebase.auth().signOut();
   };
