@@ -118,9 +118,33 @@ class Fire {
     }
   };
 
+  like = async (post) => {
+    const uid = this.uid;
+    await this.firestore
+      .collection("posts")
+      .doc(post.id)
+      .update({
+        likes: firebase.firestore.FieldValue.arrayUnion(uid),
+      });
+  };
+
+  unlike = async (post) => {
+    const uid = this.uid;
+    await this.firestore
+      .collection("posts")
+      .doc(post.id)
+      .update({
+        likes: firebase.firestore.FieldValue.arrayRemove(uid),
+      });
+  };
+
   signOut = () => {
     firebase.auth().signOut();
   };
+
+  get firestoreRef() {
+    return firebase.firestore;
+  }
 
   get firestore() {
     return firebase.firestore();

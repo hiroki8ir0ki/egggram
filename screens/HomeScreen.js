@@ -1,48 +1,19 @@
 import React, { Component } from "react";
-import { View, Text, StyleSheet, FlatList, Image } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  Image,
+  TouchableOpacity,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
 import moment from "moment";
 import Fire from "../Fire";
+import firebase from "firebase";
 
 // temporary data until we pull from Firebase
-posts = [
-  {
-    id: "1",
-    name: "Joe McKay",
-    text:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-    timestamp: 1569109273726,
-    avatar: require("../assets/tempAvatar.jpg"),
-    image: require("../assets/tempImage1.jpg"),
-  },
-  {
-    id: "2",
-    name: "Karyn Kim",
-    text:
-      "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-    timestamp: 1569109273726,
-    avatar: require("../assets/tempAvatar.jpg"),
-    image: require("../assets/tempImage2.jpg"),
-  },
-  {
-    id: "3",
-    name: "Emerson Parsons",
-    text:
-      "Amet mattis vulputate enim nulla aliquet porttitor lacus luctus. Vel elit scelerisque mauris pellentesque pulvinar pellentesque habitant.",
-    timestamp: 1569109273726,
-    avatar: require("../assets/tempAvatar.jpg"),
-    image: require("../assets/tempImage3.jpg"),
-  },
-  {
-    id: "4",
-    name: "Kathie Malone",
-    text:
-      "At varius vel pharetra vel turpis nunc eget lorem. Lorem mollis aliquam ut porttitor leo a diam sollicitudin tempor. Adipiscing tristique risus nec feugiat in fermentum.",
-    timestamp: 1569109273726,
-    avatar: require("../assets/tempAvatar.jpg"),
-    image: require("../assets/tempImage4.jpg"),
-  },
-];
 
 export default class HomeScreen extends Component {
   state = {
@@ -53,13 +24,33 @@ export default class HomeScreen extends Component {
   componentDidMount() {
     this.state.postsRef.onSnapshot((querySnapshot) => {
       const temp = [];
-      querySnapshot.forEach((doc) => temp.push(doc.data()));
+      querySnapshot.forEach((doc) => {
+        const data = {
+          id: doc.id,
+          image: doc.data().image,
+          likes: doc.data().likes,
+          location: doc.data().location,
+          text: doc.data().text,
+          timestamp: doc.data().timestamp,
+          uid: doc.data().uid,
+        };
+        temp.push(data);
+      });
 
       this.setState({ posts: temp });
     });
   }
 
+  toggleLike = (post) => {
+    const userId = Fire.shared.uid;
+
+    post.likes.includes(userId)
+      ? Fire.shared.unlike(post)
+      : Fire.shared.like(post);
+  };
+
   renderPost = (post) => {
+    const uid = Fire.shared.uid;
     return (
       <View style={styles.feedItem}>
         <Image source={post.avatar} style={styles.avatar} />
@@ -91,12 +82,17 @@ export default class HomeScreen extends Component {
           />
 
           <View style={{ flexDirection: "row" }}>
-            <Ionicons
-              name="ios-heart-empty"
-              size={24}
-              color="#73788B"
-              style={{ marginRight: 16 }}
-            />
+            <TouchableOpacity onPress={() => this.toggleLike(post)}>
+              <Ionicons
+                name={
+                  post.likes.includes(uid) ? "ios-heart" : "ios-heart-empty"
+                }
+                size={24}
+                color="#73788B"
+                style={{ marginRight: 16 }}
+              />
+            </TouchableOpacity>
+
             <Ionicons name="ios-chatboxes" size={24} color="#73788B" />
           </View>
         </View>
